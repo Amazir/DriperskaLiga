@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Driperska liga</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="css/Articles-Badges-images.css">
+    <link rel="stylesheet" href="css/Features-Large-Icons-icons.css">
+    <link rel="icon" type="image/x-icon" href="img/favicons/favicon.ico">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-custom navbar-dark">
+    <div class="container"><a class="navbar-brand" href="#">LIGA DRIPERSKA</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navbarResponsive"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="https://www.pornhub.com/gayporn">Rejestracja</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://www.pornhub.com/gayporn">Logowanie</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<header class="text-center text-white masthead" style="background: url(&quot;img/bg.png&quot;);background-size: cover;">
+    <div class="masthead-content">
+        <div class="container">
+            <h1 class="masthead-heading mb-0" style="margin-top: 36px;color: rgb(238,9,121);border-color: rgb(238,9,21);">LIGA DRIPERSKA</h1>
+            <h2 class="masthead-subheading mb-0" style="color: rgb(238,9,121);border-color: rgb(0,133,255);">imienia Wadyma</h2>
+        </div>
+    </div>
+</header>
+<section>
+    <div class="container py-4 py-xl-5" style="margin-bottom: 3px;">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2>Historia rozgrywek</h2>
+                <p class="w-lg-50">W tym miejscu znajdziesz historie rozegranych meczy, wraz ze statystykami</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            <% matches.forEach((match, index) => { %>
+                <div class="col">
+                    <div class="p-4 match-container">
+                            <span class="badge rounded-pill bg-primary mb-2">
+                                <a href="replays/<%= match.replaypath %>.rofl" style="color:white;">Pobierz powtórkę</a>
+                            </span>
+                        <h4><%= new Date(match.gamedate).toLocaleDateString() %> #<%= matches.length - index %></h4>
+                        <div class="match-details" style="display: none;">
+                            <p>
+                                <strong><h4>Drużyna <%= match.winner ? "cweli" : "gitów" %>: <p style="font-size: 12px;">(wygranych)</p></h4></strong>
+                            <p style="color: #087506;">
+                                <% let winningTeam = match.winner ? match.team1 : match.team0; %>
+                                <% let winningKills = 0; %>
+                                <% winningTeam.forEach(player => { %>
+                                    <b style="font-size: 19px;"><a href="<%= player.opgg %>" target="_blank" style="color: green;"><%= player.nickname %></a></b> grał <%= player.champ %>
+                                    (KDA: <%= player.kills %>/<%= player.deaths %>/<%= player.assists %> = <%= player.KDA %>),
+                                    Damage: <%= player.damage %>, Miniony: <%= player.minions %>, Złoto: <%= player.gold %><br>
+                                    <% winningKills += player.kills; %>
+                                <% }) %>
+                            </p>
+                            <br>
+                            <p>
+                                <strong><h4>Drużyna cweloz: <p style="font-size: 12px;">(przegranych)<p></p></h4></strong>
+                            <p style="color: red;">
+                                <% let losingTeam = match.winner ? match.team0 : match.team1; %>
+                                <% let losingKills = 0; %>
+                                <% losingTeam.forEach(player => { %>
+                                    <b style="font-size: 19px;"><a href="<%= player.opgg %>" target="_blank" style="color: red;"><%= player.nickname %></a></b> grał <%= player.champ %>
+                                    (KDA: <%= player.kills %>/<%= player.deaths %>/<%= player.assists %> = <%= player.KDA %>),
+                                    Damage: <%= player.damage %>, Miniony: <%= player.minions %>, Złoto: <%= player.gold %><br>
+                                    <% losingKills += player.kills; %>
+                                <% }) %>
+                            </p>
+                        </div>
+                        Łączny wynik: <%= winningKills %> - <%= losingKills %>
+                        <br><br>
+                        <button class="btn btn-primary toggle-details" type="button" style="width: 100%;">Pokaż szczegóły</button>
+                    </div>
+                </div>
+            <% }) %>
+
+        </div>
+    </div>
+    <div class="container text-white bg-primary border rounded border-0 p-4 p-lg-5 py-4 py-xl-5" style="margin-bottom: 2%; margin-top: 1%;">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2 class="text-white">Statystyki</h2>
+                <p class="w-lg-50">A chuj cie to obchodzi, ale pytac sie mozesz</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-heartbreak-fill">
+                            <path d="M8.931.586 7 3l1.5 4-2 3L8 15C22.534 5.396 13.757-2.21 8.931.586ZM7.358.77 5.5 3 7 7l-1.5 3 1.815 4.537C-6.533 4.96 2.685-2.467 7.358.77Z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Największe średnie obrażenia</h4>
+                        <ul>
+                            <% rankings.avgDamage.slice(0, 3).forEach(player => { %>
+                                <li><%= player.nickname %>: <%= Math.round(player.value) %></li>
+                            <% }) %>
+
+                            <% if (rankings.avgDamage.length > 3) { %>
+                                <li><a href="#" id="show-more-damage" style="color: white;">Zobacz więcej</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor">
+                            <path d="M416 398.9c58.5-41.1 96-104.1 96-174.9C512 100.3 397.4 0 256 0S0 100.3 0 224c0 70.7 37.5 133.8 96 174.9c0 .4 0 .7 0 1.1v64c0 26.5 21.5 48 48 48h48V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h64V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h48c26.5 0 48-21.5 48-48V400c0-.4 0-.7 0-1.1zM96 256a64 64 0 1 1 128 0A64 64 0 1 1 96 256zm256-64a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej killi</h4>
+                    </div>
+                </div>
+                    <ul>
+                        <% rankings.totalKills.slice(0, 3).forEach(player => { %>
+                            <li><%= player.nickname %>: <%= player.value %></li>
+                        <% }) %>
+
+                        <% if (rankings.totalKills.length > 3) { %>
+                            <li><a href="#" id="show-more-kills" style="color: white;">Zobacz więcej</a></li>
+                        <% } %>
+                    </ul>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-1-circle-fill" style="font-size: 19px;">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M9.283 4.002H7.971L6.072 5.385v1.271l1.834-1.318h.065V12h1.312V4.002Z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najlepsze KDA</h4>
+                    </div>
+                </div>
+                <ul>
+                    <% rankings.bestKDA.slice(0, 3).forEach(player => { %>
+                        <li><%= player.nickname %>: <%= player.value %></li>
+                    <% }) %>
+
+                    <% if (rankings.bestKDA.length > 3) { %>
+                        <li><a href="#" id="show-more-kda" style="color: white;">Zobacz więcej</a></li>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor">
+                            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                            <path d="M241.7 3.4c9-4.5 19.6-4.5 28.6 0l160 80c15.8 7.9 22.2 27.1 14.3 42.9C439 137.5 427.7 144 416 144v80c0 17.7-14.3 32-32 32h-4.9l32 192H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H384.5c-.4 0-.8 0-1.1 0H128.6c-.4 0-.8 0-1.1 0H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h68.9l32-192H128c-17.7 0-32-14.3-32-32V144c-11.7 0-23-6.5-28.6-17.7c-7.9-15.8-1.5-35 14.3-42.9l160-80zM314.5 448L256 399.2 197.5 448h117zM197.8 256l-4.7 28.3L256 336.8l62.9-52.5L314.2 256H197.8zm-13.9 83.2l-11.2 67L218.5 368l-34.6-28.8zM293.5 368l45.8 38.1-11.2-67L293.5 368zM176 128c-8.8 0-16 7.2-16 16s7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej golda (średnio na gre)</h4>
+                        <ul>
+                            <% rankings.avgGold.slice(0, 3).forEach(player => { %>
+                                <li><%= player.nickname %>: <%= Math.round(player.value) %></li>
+                            <% }) %>
+
+                            <% if (rankings.avgGold.length > 3) { %>
+                                <li><a href="#" id="show-more-gold" style="color: white;">Zobacz więcej</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-96 0 512 512" width="1em" height="1em" fill="currentColor">
+                            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                            <path d="M160 0c17.7 0 32 14.3 32 32V67.7c1.6 .2 3.1 .4 4.7 .7c.4 .1 .7 .1 1.1 .2l48 8.8c17.4 3.2 28.9 19.9 25.7 37.2s-19.9 28.9-37.2 25.7l-47.5-8.7c-31.3-4.6-58.9-1.5-78.3 6.2s-27.2 18.3-29 28.1c-2 10.7-.5 16.7 1.2 20.4c1.8 3.9 5.5 8.3 12.8 13.2c16.3 10.7 41.3 17.7 73.7 26.3l2.9 .8c28.6 7.6 63.6 16.8 89.6 33.8c14.2 9.3 27.6 21.9 35.9 39.5c8.5 17.9 10.3 37.9 6.4 59.2c-6.9 38-33.1 63.4-65.6 76.7c-13.7 5.6-28.6 9.2-44.4 11V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V445.1c-.4-.1-.9-.1-1.3-.2l-.2 0 0 0c-24.4-3.8-64.5-14.3-91.5-26.3c-16.1-7.2-23.4-26.1-16.2-42.2s26.1-23.4 42.2-16.2c20.9 9.3 55.3 18.5 75.2 21.6c31.9 4.7 58.2 2 76-5.3c16.9-6.9 24.6-16.9 26.8-28.9c1.9-10.6 .4-16.7-1.3-20.4c-1.9-4-5.6-8.4-13-13.3c-16.4-10.7-41.5-17.7-74-26.3l-2.8-.7 0 0C119.4 279.3 84.4 270 58.4 253c-14.2-9.3-27.5-22-35.8-39.6c-8.4-17.9-10.1-37.9-6.1-59.2C23.7 116 52.3 91.2 84.8 78.3c13.3-5.3 27.9-8.9 43.2-11V32c0-17.7 14.3-32 32-32z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej creepów</h4>
+                    </div>
+                </div>
+                <ul>
+                <% rankings.maxCreeps.slice(0, 3).forEach(player => { %>
+                    <li><%= player.nickname %>: <%= player.value %></li>
+                <% }) %>
+
+                <% if (rankings.maxCreeps.length > 3) { %>
+                    <li><a href="#" id="show-more" style="color: white;">Zobacz więcej</a></li>
+                <% } %>
+                </ul>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-wheelchair">
+                            <path d="M12 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m-.663 2.146a1.5 1.5 0 0 0-.47-2.115l-2.5-1.508a1.5 1.5 0 0 0-1.676.086l-2.329 1.75a.866.866 0 0 0 1.051 1.375L7.361 3.37l.922.71-2.038 2.445A4.732 4.732 0 0 0 2.628 7.67l1.064 1.065a3.25 3.25 0 0 1 4.574 4.574l1.064 1.063a4.732 4.732 0 0 0 1.09-3.998l1.043-.292-.187 2.991a.872.872 0 1 0 1.741.098l.206-4.121A1 1 0 0 0 12.224 8h-2.79l1.903-2.854ZM3.023 9.48a3.25 3.25 0 0 0 4.496 4.496l1.077 1.077a4.75 4.75 0 0 1-6.65-6.65l1.077 1.078Z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej deadów</h4>
+                    </div>
+                </div>
+                <ul>
+                    <% rankings.maxDeaths.slice(0, 3).forEach(player => { %>
+                        <li><%= player.nickname %>: <%= player.value %></li>
+                    <% }) %>
+
+                    <% if (rankings.maxDeaths.length > 3) { %>
+                        <li><a href="#" id="show-more-deaths" style="color: white;">Zobacz więcej</a></li>
+                    <% } %>
+                </ul>
+
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-emoji-dizzy">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                            <path d="M9.146 5.146a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708m-5 0a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 1 1 .708.708l-.647.646.647.646a.5.5 0 1 1-.708.708L5.5 7.207l-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708zM10 11a2 2 0 1 1-4 0 2 2 0 0 1 4 0"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej killi (w jednym meczu)</h4>
+                        <ul>
+                            <% sortedKills.slice(0, 3).forEach(player=> { %>
+                                <li><%= player.nickname %>: <%= Math.round(player.value) %>, <%= player.champion %> dnia <%= player.date %></li>
+                            <% }) %>
+
+                            <% if (sortedKills.length > 3) { %>
+                                <li><a href="#" id="show-more-skills" style="color: white;">Zobacz więcej</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor">
+                            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                            <path d="M368 128c0 44.4-25.4 83.5-64 106.4V256c0 17.7-14.3 32-32 32H176c-17.7 0-32-14.3-32-32V234.4c-38.6-23-64-62.1-64-106.4C80 57.3 144.5 0 224 0s144 57.3 144 128zM168 176a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm144-32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM3.4 273.7c7.9-15.8 27.1-22.2 42.9-14.3L224 348.2l177.7-88.8c15.8-7.9 35-1.5 42.9 14.3s1.5 35-14.3 42.9L295.6 384l134.8 67.4c15.8 7.9 22.2 27.1 14.3 42.9s-27.1 22.2-42.9 14.3L224 419.8 46.3 508.6c-15.8 7.9-35 1.5-42.9-14.3s-1.5-35 14.3-42.9L152.4 384 17.7 316.6C1.9 308.7-4.5 289.5 3.4 273.7z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Najwięcej deadów (w jednym meczu)</h4>
+                    </div>
+                </div>
+                <ul>
+                    <% sortedDeaths.slice(0, 3).forEach(player=> { %>
+                        <li><%= player.nickname %>: <%= Math.round(player.value) %>, <%= player.champion %> dnia <%= player.date %></li>
+                    <% }) %>
+
+                    <% if (sortedDeaths.length > 3) { %>
+                        <li><a href="#" id="show-more-sdeads" style="color: white;">Zobacz więcej</a></li>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-semi-white text-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor">
+                            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                            <path d="M0 96C0 43 43 0 96 0H384h32c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32v64c17.7 0 32 14.3 32 32s-14.3 32-32 32H384 96c-53 0-96-43-96-96V96zM64 416c0 17.7 14.3 32 32 32H352V384H96c-17.7 0-32 14.3-32 32zM320 112c0-35.3-35.8-64-80-64s-80 28.7-80 64c0 20.9 12.6 39.5 32 51.2V176c0 8.8 7.2 16 16 16h64c8.8 0 16-7.2 16-16V163.2c19.4-11.7 32-30.3 32-51.2zM208 96a16 16 0 1 1 0 32 16 16 0 1 1 0-32zm48 16a16 16 0 1 1 32 0 16 16 0 1 1 -32 0zM134.3 209.3c-8.1-3.5-17.5 .3-21 8.4s.3 17.5 8.4 21L199.4 272l-77.7 33.3c-8.1 3.5-11.9 12.9-8.4 21s12.9 11.9 21 8.4L240 289.4l105.7 45.3c8.1 3.5 17.5-.3 21-8.4s-.3-17.5-8.4-21L280.6 272l77.7-33.3c8.1-3.5 11.9-12.9 8.4-21s-12.9-11.9-21-8.4L240 254.6 134.3 209.3z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4 class="text-white">Największy damage (w jednym meczu)</h4>
+                    </div>
+                </div>
+                <ul>
+                    <% sortedDamage.slice(0, 3).forEach(player=> { %>
+                        <li><%= player.nickname %>: <%= Math.round(player.value) %>, <%= player.champion %> dnia <%= player.date %></li>
+                    <% }) %>
+
+                    <% if (sortedDamage.length > 3) { %>
+                        <li><a href="#" id="show-more-sdmg" style="color: white;">Zobacz więcej</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container py-4 py-xl-5">
+        <div class="row mb-5" style="margin-top: 2%;">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2>Zawodnicy</h2>
+                <p class="w-lg-50">Tutaj znajdziesz liste zawodników, wraz z ich statystykami oraz linkami do profilów mainów na op.gg</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-xl-6 mx-auto p-4">
+                <% players.forEach((playerData, index) => { %>
+                    <div id="player-card">
+                        <div class="d-flex align-items-center align-items-md-start align-items-xl-center" style="margin-bottom: 2%;">
+                            <div class="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center me-4 d-inline-block bs-icon xl">
+                                <img src="img/profilowe/<%= playerData.player.photopath %>" alt="Ikona gracza" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bell" style="width: 100%; height: 100%;">
+                            </div>
+                            <div>
+                                <h4><%= playerData.player.firstname %> "<%= playerData.player.nickname %>" <%= playerData.player.lastname %></h4>
+                                <p>Ostatni mecz: <%= playerData.lastMatch %></p>
+                            </div>
+                        </div>
+
+                        <span class="badge rounded-pill bg-primary mb-2">
+                                <a href="<%= playerData.player.opgg %>" style="color:white;" target="_blank">Sprawdź op.gg</a>
+                            </span>
+                        <% if (index === 0) { %>
+                            <div class="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center me-4 d-inline-block bs-icon xl" style="background: rgb(222,160,0); float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-1-circle-fill">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M9.283 4.002H7.971L6.072 5.385v1.271l1.834-1.318h.065V12h1.312V4.002Z"></path>
+                                </svg>
+                            </div>
+                        <% } else if (index === 1) { %>
+                            <div class="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center me-4 d-inline-block bs-icon xl" style="background: rgb(207,202,184); float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-2-circle">
+                                    <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.646 6.24v.07H5.375v-.064c0-1.213.879-2.402 2.637-2.402 1.582 0 2.613.949 2.613 2.215 0 1.002-.6 1.667-1.287 2.43l-.096.107-1.974 2.22v.077h3.498V12H5.422v-.832l2.97-3.293c.434-.475.903-1.008.903-1.705 0-.744-.557-1.236-1.313-1.236-.843 0-1.336.615-1.336 1.306Z"></path>
+                                </svg>
+                            </div>
+                        <% } else if (index === 2) { %>
+
+                            <div class="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center me-4 d-inline-block bs-icon xl" style="background: rgb(128,58,8); float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-3-circle">
+                                    <path d="M7.918 8.414h-.879V7.342h.838c.78 0 1.348-.522 1.342-1.237 0-.709-.563-1.195-1.348-1.195-.79 0-1.312.498-1.348 1.055H5.275c.036-1.137.95-2.115 2.625-2.121 1.594-.012 2.608.885 2.637 2.062.023 1.137-.885 1.776-1.482 1.875v.07c.703.07 1.71.64 1.734 1.917.024 1.459-1.277 2.396-2.93 2.396-1.705 0-2.707-.967-2.754-2.144H6.33c.059.597.68 1.06 1.541 1.066.973.006 1.6-.563 1.588-1.354-.006-.779-.621-1.318-1.541-1.318Z"></path>
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8"></path>
+                                </svg>
+                            </div>
+                        <% } %>
+                        <p style="margin-bottom: 13px;">Rozegrane mecze: <%= playerData.stats.totalGames %><br>Wygrane mecze: <%= playerData.stats.totalWins %><br>Winrate:&nbsp;<%= playerData.stats.winRate %>%<br>KDA: <%= playerData.stats.KDA %></p>
+                    </div>
+                    <hr class="my-5" style="margin-top: 5%;">
+                <% }) %>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section></section>
+<section></section>
+<footer class="py-5 bg-black">
+    <div class="container">
+        <p class="text-center text-white m-0 small">Copyright&nbsp;© Czarna Pyta Software sp. zoo 2024</p>
+    </div>
+</footer>
+<script>
+
+    document.getElementById('show-more').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingPlayers = "<% rankings.maxCreeps.slice(3).forEach(player => { %><%= player.nickname %>: <%= player.value %>\n<% }) %>";
+        alert(remainingPlayers);
+    });
+
+    document.getElementById('show-more-deaths').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDeaths = "<% rankings.maxDeaths.slice(3).forEach(player => { %><%= player.nickname %>: <%= player.value %>\n<% }) %>";
+        alert(remainingDeaths);
+    });
+
+    // Best KDA - Zobacz więcej
+    document.getElementById('show-more-kda').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingKDA = "<% rankings.bestKDA.slice(3).forEach(player => { %><%= player.nickname %>: <%= player.value %>\n<% }) %>";
+        alert(remainingKDA);
+    });
+
+    // Total Kills - Zobacz więcej
+    document.getElementById('show-more-kills').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingKills = "<% rankings.totalKills.slice(3).forEach(player => { %><%= player.nickname %>: <%= player.value %>\n<% }) %>";
+        alert(remainingKills);
+    });
+
+    // Avg Damage - Zobacz więcej
+    document.getElementById('show-more-damage').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDamage = "<% rankings.avgDamage.slice(3).forEach(player => { %><%= player.nickname %>: <%= Math.round(player.value) %>\n<% }) %>";
+        alert(remainingDamage);
+    });
+
+    document.getElementById('show-more-gold').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDamage = "<% rankings.avgGold.slice(3).forEach(player => { %><%= player.nickname %>: <%= Math.round(player.value) %>\n<% }) %>";
+        alert(remainingDamage);
+    });
+
+    document.getElementById('show-more-skills').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDamage = "<% sortedKills.slice(3).forEach(player => { %><%= player.nickname %>: <%= Math.round(player.value) %>\n<% }) %>";
+        alert(remainingDamage);
+    });
+
+    document.getElementById('show-more-sdeads').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDamage = "<% sortedDeaths.slice(3).forEach(player => { %><%= player.nickname %>: <%= Math.round(player.value) %>\n<% }) %>";
+        alert(remainingDamage);
+    });
+
+    document.getElementById('show-more-sdmg').addEventListener('click', function(event) {
+        event.preventDefault();
+        var remainingDamage = "<% sortedDamage.slice(3).forEach(player => { %><%= player.nickname %>: <%= Math.round(player.value) %>\n<% }) %>";
+        alert(remainingDamage);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var toggleButtons = document.querySelectorAll(".toggle-details");
+
+        toggleButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var matchContainer = button.closest(".match-container");
+                var matchDetails = matchContainer.querySelector(".match-details");
+
+                // Hide all match details
+                document.querySelectorAll(".match-details").forEach(function (details) {
+                    if (details !== matchDetails) {
+                        details.style.display = "none";
+                    }
+                });
+
+                // Toggle clicked match details
+                if (matchDetails.style.display === "none" || matchDetails.style.display === "") {
+                    matchDetails.style.display = "block";
+                    button.innerText = 'Ukryj szczegóły';
+                } else {
+                    matchDetails.style.display = "none";
+                    button.innerText = 'Pokaż szczegóły';
+                }
+            });
+        });
+    });
+
+</script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
