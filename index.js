@@ -1,6 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 var favicon = require('serve-favicon');
+const util = require('util')
 const path = require('path');
 
 const app = express();
@@ -67,6 +68,43 @@ function getPlayerNicknameById(playerId) {
         });
     });
 }
+
+var normalized = function(val, type) {
+    let maxValue;
+
+    switch (type) {
+        case "dmg": // Damage cap: 30,000
+            maxValue = 30000;
+            break;
+
+        case "wr": // Win rate cap: 100%
+            maxValue = 100;
+            break;
+
+        case "kills": // Kills cap: 15
+            maxValue = 15;
+            break;
+
+        case "assists": // Assists cap: 15
+            maxValue = 15;
+            break;
+
+        case "gold": // Gold cap: 15,000
+            maxValue = 15000;
+            break;
+
+        case "creeps": // Creeps cap: 200
+            maxValue = 200;
+            break;
+
+        default:
+            return 0;
+    }
+
+    let score = (val / maxValue) * 10;
+
+    return score;
+};
 
 
 app.get('/', (req, res) => {
@@ -179,9 +217,31 @@ app.get('/', (req, res) => {
                             if (err) reject(err);
 
                             const stats = await calculatePlayerStats(player.id, matches);
+
+                            // Obliczenie rankingScore
+                            const rankingScore =
+                                normalized(stats.winRate * 0.30, "wr") +   // Winrate (30%)
+                                normalized(stats.damage * 0.20, "dmg") +  // Damage (20%)
+                                stats.totalGames * 0.20 + // Games played (10%)
+                                normalized(stats.kills * 0.10, "kills") + // Kills per game (10%)
+                                normalized(stats.assists * 0.10, "assists") + // Assists per game (10%)
+                                normalized(stats.gold * 0.10, "gold") +  // Gold per game (10%)
+                                normalized(stats.creeps * 0.10, "creeps"); // Creeps per game (10%)
+
+                            const rankingScoreExplanation = [normalized(stats.winRate * 0.30, "wr"),
+                                normalized(stats.winRate * 0.30, "wr"),
+                                normalized(stats.damage * 0.20, "dmg"),
+                                stats.totalGames * 0.20,
+                                normalized(stats.kills * 0.10, "kills"),
+                                normalized(stats.assists * 0.10, "assists"),
+                                normalized(stats.gold * 0.10, "gold"),
+                                normalized(stats.creeps * 0.10, "creeps")];
+
                             resolve({
                                 player,
                                 stats,
+                                rankingScore,
+                                rankingScoreExplanation,
                                 lastMatch: matches.length > 0 ? matches[matches.length - 1].gamedate : 'N/A',
                             });
                         });
@@ -189,10 +249,11 @@ app.get('/', (req, res) => {
                 }));
 
                 playersData.sort((a, b) => {
-                    if (b.stats.winRate*b.stats.totalGames !== a.stats.winRate*a.stats.totalGames) {
-                        return b.stats.winRate*b.stats.totalGames - a.stats.winRate*a.stats.totalGames; // Sortuj po Winrate
+
+                    if (a.rankingScore !== b.rankingScore) {
+                        return b.rankingScore - a.rankingScore;
                     } else {
-                        return b.stats.KDA - a.stats.KDA; // Jeśli Winrate jest taki sam, sortuj po KDA
+                        return b.stats.KDA - a.stats.KDA;
                     }
                 });
 
@@ -220,8 +281,8 @@ app.get('/', (req, res) => {
                     players: playersData,
                     matches,
                     max,
-                    rankings, // Przekaż rankingi do widoku
-                    sortedKills, // Przekaż posortowane dane do widoku
+                    rankings,
+                    sortedKills,
                     sortedDeaths,
                     sortedDamage
                 });
@@ -235,7 +296,6 @@ app.get('/', (req, res) => {
     });
 });
 
-// Function to calculate player stats
 function calculatePlayerStats(playerId, matches) {
     return new Promise(async (resolve, reject) => {
         let totalGames = 0;
@@ -244,10 +304,10 @@ function calculatePlayerStats(playerId, matches) {
         let totalDeaths = 0;
         let totalAssists = 0;
         let totalCreeps = 0;
-        let totalDamage = 0;  // Nowy licznik dla obrażeń
+        let totalDamage = 0;
         let totalGold = 0;
 
-        const processedMatches = new Set();  // Zbiór do śledzenia przetworzonych meczów dla tego gracza
+        const processedMatches = new Set();
 
         matches.forEach(match => {
             const teams = [0, 1]; // Team 0 and Team 1
@@ -255,8 +315,8 @@ function calculatePlayerStats(playerId, matches) {
                 for (let i = 1; i <= 5; i++) {
                     const playerData = match[`team${team}player${i}`].split(',');
                     if (parseInt(playerData[0]) === playerId && !processedMatches.has(match.id)) {
-                        // Sprawdź, czy gracz już został przetworzony w tym meczu
-                        processedMatches.add(match.id); // Dodaj mecz do przetworzonych
+
+                        processedMatches.add(match.id);
 
                         totalGames++;
 
@@ -302,6 +362,12 @@ function calculatePlayerStats(playerId, matches) {
                 totalWins,
                 winRate: winRate.toFixed(2),
                 KDA: KDA.toFixed(2),
+                damage: avgDamage,
+                kills: totalGames > 0 ? totalKills / totalGames : 0,
+                assists: totalGames > 0 ? totalAssists / totalGames : 0,
+                gold: avgGold,
+                creeps: totalGames > 0 ? totalCreeps / totalGames : 0,
+                nickname: nickname
             });
         } catch (error) {
             reject('Error calculating player stats');

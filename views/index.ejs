@@ -317,7 +317,48 @@
                                 </svg>
                             </div>
                         <% } %>
-                        <p style="margin-bottom: 13px;">Rozegrane mecze: <%= playerData.stats.totalGames %><br>Wygrane mecze: <%= playerData.stats.totalWins %><br>Winrate:&nbsp;<%= playerData.stats.winRate %>%<br>KDA: <%= playerData.stats.KDA %></p>
+                        <p style="margin-bottom: 13px;">Rozegrane mecze: <%= playerData.stats.totalGames %><br>Wygrane mecze: <%= playerData.stats.totalWins %><br>Winrate:&nbsp;<%= playerData.stats.winRate %>%<br>KDA: <%= playerData.stats.KDA %><br><b>Punkty rankingowe: <%= parseFloat(playerData.rankingScore).toFixed(2) %></b><a data-bs-toggle="modal" style="margin-left: 10px;font-size: 12px;" data-bs-target="#modal<%= index %>">(Jak punkty są liczone?)</a></p>
+                        <div class="modal fade" id="modal<%= index %>" tabindex="-1" aria-labelledby="modalLabel<%= index %>" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalLabel<%= index %>">Punkty rankingowe dla: <%= playerData.player.nickname %></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <strong>Win Rate (30%):</strong> <%= playerData.rankingScoreExplanation[0].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Damage (20%):</strong> <%= playerData.rankingScoreExplanation[2].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Zagrane gry (20%):</strong> <%= playerData.rankingScoreExplanation[3].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Kille (10%):</strong> <%= playerData.rankingScoreExplanation[4].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Asysty (10%):</strong> <%= playerData.rankingScoreExplanation[5].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Złoto (10%):</strong> <%= playerData.rankingScoreExplanation[6].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong>Creepy (10%):</strong> <%= playerData.rankingScoreExplanation[7].toFixed(2) %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <strong><b>Końcowy wynik (punkty rankingowe): <%= playerData.rankingScore.toFixed(2) %></b></strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <hr class="my-5" style="margin-top: 5%;">
                 <% }) %>
