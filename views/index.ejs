@@ -19,7 +19,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="https://www.pornhub.com/gayporn">Rejestracja</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://www.pornhub.com/gayporn">Logowanie</a></li>
+                <li class="nav-item"><a class="nav-link" href="/login">Logowanie</a></li>
             </ul>
         </div>
     </div>
@@ -33,7 +33,44 @@
     </div>
 </header>
 <section>
+    <div class="container py-4 py-xl-5">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2 class="text-black">Obecny sezon</h2>
+                <p class="w-lg-50">Chujowy recap, ale chociaż jest</p>
+            </div>
+        </div>
+        <div class="text-center text-white-50 bg-primary border rounded border-0 p-3">
+            <div class="row row-cols-2 row-cols-md-4">
+                <div class="col">
+                    <div class="p-3">
+                        <h4 class="display-5 fw-bold text-white mb-0"><%= totalMatches %></h4>
+                        <p class="mb-0">zagranych meczy</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="p-3">
+                        <h4 class="display-5 fw-bold text-white mb-0"><%= totalPlayers %></h4>
+                        <p class="mb-0">zawodników</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="p-3">
+                        <h4 class="display-5 fw-bold text-white mb-0"><%= totalKills %></h4>
+                        <p class="mb-0">wyjebek</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="p-3">
+                        <h4 class="display-5 fw-bold text-white mb-0"><%= totalCreeps %></h4>
+                        <p class="mb-0">creepów</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container py-4 py-xl-5" style="margin-bottom: 3px;">
+
         <div class="row mb-5">
             <div class="col-md-8 col-xl-6 text-center mx-auto">
                 <h2>Historia rozgrywek</h2>
@@ -328,25 +365,25 @@
                                     <div class="modal-body">
                                         <ul class="list-group">
                                             <li class="list-group-item">
-                                                <strong>Win Rate (30%):</strong> <%= playerData.rankingScoreExplanation[0].toFixed(2) %>
+                                                <strong>Win Rate (0,3):</strong> <%= playerData.rankingScoreExplanation[0].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Damage (20%):</strong> <%= playerData.rankingScoreExplanation[2].toFixed(2) %>
+                                                <strong>Damage (0,2):</strong> <%= playerData.rankingScoreExplanation[2].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Zagrane gry (20%):</strong> <%= playerData.rankingScoreExplanation[3].toFixed(2) %>
+                                                <strong>Zagrane gry (0,4):</strong> <%= playerData.rankingScoreExplanation[3].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Kille (10%):</strong> <%= playerData.rankingScoreExplanation[4].toFixed(2) %>
+                                                <strong>KDA (0,2):</strong> <%= playerData.rankingScoreExplanation[4].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Asysty (10%):</strong> <%= playerData.rankingScoreExplanation[5].toFixed(2) %>
+                                                <strong>Złoto (0,1):</strong> <%= playerData.rankingScoreExplanation[5].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Złoto (10%):</strong> <%= playerData.rankingScoreExplanation[6].toFixed(2) %>
+                                                <strong>Creepy (0,1):</strong> <%= playerData.rankingScoreExplanation[6].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
-                                                <strong>Creepy (10%):</strong> <%= playerData.rankingScoreExplanation[7].toFixed(2) %>
+                                                <strong>Vision Score (0,1):</strong> <%= playerData.rankingScoreExplanation[7].toFixed(2) %>
                                             </li>
                                             <li class="list-group-item">
                                                 <strong><b>Końcowy wynik (punkty rankingowe): <%= playerData.rankingScore.toFixed(2) %></b></strong>

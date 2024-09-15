@@ -89,12 +89,20 @@ var normalized = function(val, type) {
             maxValue = 15;
             break;
 
+        case "kda":
+            maxValue = 5;
+            break;
+
         case "gold": // Gold cap: 15,000
             maxValue = 15000;
             break;
 
         case "creeps": // Creeps cap: 200
             maxValue = 200;
+            break;
+
+        case "vs": // Gold cap: 15,000
+            maxValue = 50;
             break;
 
         default:
@@ -111,11 +119,16 @@ app.get('/', (req, res) => {
     const playerQuery = 'SELECT * FROM players';
     const matchQuery = 'SELECT * FROM matches ORDER BY gamedate DESC';
 
-    // Resetowanie rankingu przed każdym nowym zapytaniem
+    let totalKills = 0;
+    let totalCreeps = 0;
+    let totalMatches = 0;
+    let totalPlayers = 0;
+
     rankings = {
         totalKills: [],
         avgDamage: [],
         avgGold: [],
+        avgVs: [],
         maxDeaths: [],
         bestKDA: [],
         maxCreeps: []
@@ -131,12 +144,14 @@ app.get('/', (req, res) => {
         if (err) {
             return res.status(500).send('Database error');
         }
+        totalPlayers = players.length;
 
         db.all(matchQuery, async (err, matches) => {
             if (err) {
                 return res.status(500).send('Error fetching match history');
             }
 
+            totalMatches = matches.length;
             const processedPlayers = new Set(); // Zbiór do śledzenia przetworzonych graczy
 
             matches.forEach(match => {
@@ -145,7 +160,9 @@ app.get('/', (req, res) => {
                     const playerData = parsePlayerData(match[`team0player${i}`], players);
                     match.team0.push(playerData);
 
-                    // Aktualizujemy najlepsze zabójstwa, jeśli obecny wynik jest wyższy
+                    totalKills += playerData.kills;
+                    totalCreeps += playerData.minions;
+
                     if (!gameStats.kills[playerData.nickname] || playerData.kills > gameStats.kills[playerData.nickname].value) {
                         gameStats.kills[playerData.nickname] = {
                             value: playerData.kills,
@@ -154,7 +171,6 @@ app.get('/', (req, res) => {
                         };
                     }
 
-                    // Aktualizujemy najlepsze śmierci
                     if (!gameStats.deaths[playerData.nickname] || playerData.deaths > gameStats.deaths[playerData.nickname].value) {
                         gameStats.deaths[playerData.nickname] = {
                             value: playerData.deaths,
@@ -163,7 +179,6 @@ app.get('/', (req, res) => {
                         };
                     }
 
-                    // Aktualizujemy najlepsze obrażenia
                     if (!gameStats.damage[playerData.nickname] || playerData.damage > gameStats.damage[playerData.nickname].value) {
                         gameStats.damage[playerData.nickname] = {
                             value: playerData.damage,
@@ -178,7 +193,9 @@ app.get('/', (req, res) => {
                     const playerData = parsePlayerData(match[`team1player${i}`], players);
                     match.team1.push(playerData);
 
-                    // Aktualizujemy najlepsze zabójstwa
+                    totalKills += playerData.kills;
+                    totalCreeps += playerData.minions;
+
                     if (!gameStats.kills[playerData.nickname] || playerData.kills > gameStats.kills[playerData.nickname].value) {
                         gameStats.kills[playerData.nickname] = {
                             value: playerData.kills,
@@ -187,7 +204,6 @@ app.get('/', (req, res) => {
                         };
                     }
 
-                    // Aktualizujemy najlepsze śmierci
                     if (!gameStats.deaths[playerData.nickname] || playerData.deaths > gameStats.deaths[playerData.nickname].value) {
                         gameStats.deaths[playerData.nickname] = {
                             value: playerData.deaths,
@@ -196,7 +212,6 @@ app.get('/', (req, res) => {
                         };
                     }
 
-                    // Aktualizujemy najlepsze obrażenia
                     if (!gameStats.damage[playerData.nickname] || playerData.damage > gameStats.damage[playerData.nickname].value) {
                         gameStats.damage[playerData.nickname] = {
                             value: playerData.damage,
@@ -222,20 +237,24 @@ app.get('/', (req, res) => {
                             const rankingScore =
                                 normalized(stats.winRate * 0.30, "wr") +   // Winrate (30%)
                                 normalized(stats.damage * 0.20, "dmg") +  // Damage (20%)
-                                stats.totalGames * 0.20 + // Games played (10%)
-                                normalized(stats.kills * 0.10, "kills") + // Kills per game (10%)
-                                normalized(stats.assists * 0.10, "assists") + // Assists per game (10%)
+                                stats.totalGames * 0.40 + // Games played (10%)
+                                //normalized(stats.kills * 0.10, "kills") + // Kills per game (10%)
+                                //normalized(stats.assists * 0.10, "assists") + // Assists per game (10%)
+                                normalized(stats.KDA * 0.20, "kda") +
                                 normalized(stats.gold * 0.10, "gold") +  // Gold per game (10%)
+                                normalized(stats.vs * 0.10, "vs") +  // Vs per game (10%)
                                 normalized(stats.creeps * 0.10, "creeps"); // Creeps per game (10%)
 
                             const rankingScoreExplanation = [normalized(stats.winRate * 0.30, "wr"),
                                 normalized(stats.winRate * 0.30, "wr"),
                                 normalized(stats.damage * 0.20, "dmg"),
-                                stats.totalGames * 0.20,
-                                normalized(stats.kills * 0.10, "kills"),
-                                normalized(stats.assists * 0.10, "assists"),
+                                stats.totalGames * 0.40,
+                                //normalized(stats.kills * 0.10, "kills"),
+                                //normalized(stats.assists * 0.10, "assists"),
+                                normalized(stats.KDA * 0.20, "kda"),
                                 normalized(stats.gold * 0.10, "gold"),
-                                normalized(stats.creeps * 0.10, "creeps")];
+                                normalized(stats.creeps * 0.10, "creeps"),
+                                normalized(stats.vs * 0.10, "vs")];
 
                             resolve({
                                 player,
@@ -284,7 +303,11 @@ app.get('/', (req, res) => {
                     rankings,
                     sortedKills,
                     sortedDeaths,
-                    sortedDamage
+                    sortedDamage,
+                    totalMatches,
+                    totalPlayers,
+                    totalKills,
+                    totalCreeps
                 });
 
 
@@ -293,6 +316,12 @@ app.get('/', (req, res) => {
                 res.status(500).send('Error loading data');
             }
         });
+    });
+});
+
+app.get('/login', (req, res) => {
+    res.render('login', {
+
     });
 });
 
@@ -306,6 +335,7 @@ function calculatePlayerStats(playerId, matches) {
         let totalCreeps = 0;
         let totalDamage = 0;
         let totalGold = 0;
+        let totalVs = 0;
 
         const processedMatches = new Set();
 
@@ -330,6 +360,7 @@ function calculatePlayerStats(playerId, matches) {
                         totalCreeps += parseInt(playerData[7]);  // Creeps
                         totalDamage += parseInt(playerData[3]);  // Obrażenia
                         totalGold += parseInt(playerData[8]); // Gold
+                        totalVs += parseInt(playerData[10]);
                     }
                 }
             });
@@ -367,6 +398,7 @@ function calculatePlayerStats(playerId, matches) {
                 assists: totalGames > 0 ? totalAssists / totalGames : 0,
                 gold: avgGold,
                 creeps: totalGames > 0 ? totalCreeps / totalGames : 0,
+                vs: totalGames > 0 ? totalVs / totalGames : 0,
                 nickname: nickname
             });
         } catch (error) {
