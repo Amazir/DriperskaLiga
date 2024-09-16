@@ -152,6 +152,13 @@ app.get('/', (req, res) => {
             }
 
             totalMatches = matches.length;
+
+            // Zbieranie statystyk postaci
+            const championStats = calculateChampionStats(matches);
+
+            // Obliczanie win rate i pick rate
+            const championRates = calculateChampionWinPickRates(championStats, totalMatches);
+
             const processedPlayers = new Set(); // Zbiór do śledzenia przetworzonych graczy
 
             matches.forEach(match => {
@@ -307,7 +314,8 @@ app.get('/', (req, res) => {
                     totalMatches,
                     totalPlayers,
                     totalKills,
-                    totalCreeps
+                    totalCreeps,
+                    championRates
                 });
 
 
@@ -324,6 +332,77 @@ app.get('/login', (req, res) => {
 
     });
 });
+
+function calculateChampionStats(matches) {
+    const championStats = {
+        TOP: {},
+        JNG: {},
+        MID: {},
+        ADC: {},
+        SUPP: {}
+    };
+
+    matches.forEach(match => {
+        const teams = [0, 1]; // Dla obu drużyn
+        teams.forEach(team => {
+            for (let i = 1; i <= 5; i++) {
+                const playerData = match[`team${team}player${i}`].split(',');
+                const playerId = parseInt(playerData[0]);
+                const champion = playerData[1];
+                const role = playerData[2]; // Pozycja: top, jungle, mid, adc, supp
+                const teamWon = (team === match.winner); // Sprawdź, czy drużyna wygrała
+
+                if (!championStats[role]) continue;
+
+                if (!championStats[role][champion]) {
+                    championStats[role][champion] = {
+                        wins: 0,
+                        games: 0
+                    };
+                }
+
+                championStats[role][champion].games += 1;
+
+                if (teamWon) {
+                    championStats[role][champion].wins += 1;
+                }
+            }
+        });
+    });
+
+    return championStats;
+}
+
+function calculateChampionWinPickRates(championStats, totalMatches) {
+    const result = {
+        TOP: [],
+        JNG: [],
+        MID: [],
+        ADC: [],
+        SUPP: []
+    };
+
+    for (const role in championStats) {
+        for (const champion in championStats[role]) {
+            const stats = championStats[role][champion];
+            const winRate = ((stats.wins / stats.games) * 100).toFixed(2);
+            const pickRate = ((stats.games / totalMatches) * 100).toFixed(2);
+
+            result[role].push({
+                champion,
+                winRate: parseFloat(winRate),
+                pickRate: parseFloat(pickRate),
+                games: stats.games
+            });
+        }
+
+        // Sortowanie: najpierw według winRate, potem pickRate
+        result[role].sort((a, b) => b.winRate - a.winRate || b.pickRate - a.pickRate);
+    }
+
+    return result;
+}
+
 
 function calculatePlayerStats(playerId, matches) {
     return new Promise(async (resolve, reject) => {
